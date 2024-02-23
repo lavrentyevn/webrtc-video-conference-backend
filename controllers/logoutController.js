@@ -1,12 +1,14 @@
-const User = require("../model/User");
+const db = require("../config/db");
 
 const handleLogout = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
   const refreshToken = cookies.jwt;
 
-  const foundUser = await User.findOne({ refreshToken }).exec();
-  if (!foundUser) {
+  const foundUser = await db.query(
+    `SELECT * FROM user_model WHERE refresh_token = '${refreshToken}'`
+  );
+  if (!foundUser.rowCount) {
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "none",
@@ -15,9 +17,9 @@ const handleLogout = async (req, res) => {
     return res.sendStatus(204);
   }
 
-  foundUser.refreshToken = "";
-  const result = await foundUser.save();
-  console.log(result);
+  const updateRefreshToken = await db.query(
+    `UPDATE user_model SET refresh_token = '' WHERE refresh_token = '${refreshToken}'`
+  );
 
   res.clearCookie("jwt", {
     httpOnly: true,
