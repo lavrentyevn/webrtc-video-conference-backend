@@ -79,7 +79,7 @@ List of API:
 
 - GET ("/refresh") refresh client || guest
 
-- POST ("/room", {name, password, creator}) creating room
+- POST ("/room", {name, password, description, creator}) creating room
 - POST ("/room/access", {name, password}) accessing room
 - POST ("/room/check", {username}) check rooms
 
